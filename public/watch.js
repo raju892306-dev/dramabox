@@ -3,38 +3,31 @@
 // preparing/playing the ad, and we only call /api/unlock (which sends the
 // video and applies the 24h lock) after the SDK reports the ad was
 // genuinely watched. No fake timers, no fake "connecting to server" text.
-
 const tg = window.Telegram?.WebApp;
 tg?.ready();
 tg?.expand();
-
-// TODO: replace with your real Adsgram block id (from your Adsgram dashboard).
-const ADSGRAM_BLOCK_ID = 'REPLACE_WITH_YOUR_ADSGRAM_BLOCK_ID';
+// Your Adsgram block id.
+const ADSGRAM_BLOCK_ID = '38638';
 // TODO: replace with your bot's @username so "Check inbox" can deep-link to it.
 const BOT_USERNAME = 'REPLACE_WITH_YOUR_BOT_USERNAME';
-
 const params = new URLSearchParams(window.location.search);
 const videoId = params.get('id');
-
 const loadingState = document.getElementById('loadingState');
 const successState = document.getElementById('successState');
 const errorState = document.getElementById('errorState');
 const statusTitle = document.getElementById('statusTitle');
 const errorMsg = document.getElementById('errorMsg');
-
 function showError(msg) {
   loadingState.hidden = true;
   successState.hidden = true;
   errorState.hidden = false;
   errorMsg.textContent = msg;
 }
-
 function showSuccess() {
   loadingState.hidden = true;
   errorState.hidden = true;
   successState.hidden = false;
 }
-
 async function completeUnlock() {
   statusTitle.textContent = 'ভিডিও পাঠানো হচ্ছে...';
   try {
@@ -57,21 +50,17 @@ async function completeUnlock() {
     showError('নেটওয়ার্ক সমস্যা হয়েছে। আবার চেষ্টা করুন।');
   }
 }
-
 function runAd() {
   if (!videoId) {
     showError('ভিডিও খুঁজে পাওয়া যায়নি।');
     return;
   }
-
   if (!window.Adsgram || ADSGRAM_BLOCK_ID.startsWith('REPLACE_')) {
     showError('বিজ্ঞাপন সিস্টেম এখনো কনফিগার করা হয়নি (Adsgram block id সেট করুন)।');
     return;
   }
-
   statusTitle.textContent = 'অ্যাড লোড হচ্ছে...';
   const AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
-
   AdController.show()
     .then(() => {
       // Ad was genuinely shown and watched through — now unlock.
@@ -82,7 +71,6 @@ function runAd() {
       showError('অ্যাডটি সম্পূর্ণ দেখা হয়নি। ভিডিও আনলক করতে সম্পূর্ণ অ্যাডটি দেখুন।');
     });
 }
-
 document.getElementById('checkInboxBtn')?.addEventListener('click', () => {
   if (!BOT_USERNAME.startsWith('REPLACE_') && tg?.openTelegramLink) {
     tg.openTelegramLink(`https://t.me/${BOT_USERNAME}`);
@@ -90,5 +78,4 @@ document.getElementById('checkInboxBtn')?.addEventListener('click', () => {
     tg?.close?.();
   }
 });
-
 runAd();
