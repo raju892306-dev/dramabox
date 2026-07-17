@@ -6,7 +6,7 @@ tg?.expand();
 // Your Adsgram block id.
 const ADSGRAM_BLOCK_ID = '38638';
 // TODO: replace with your bot's @username so "Check inbox" can deep-link to it.
-const BOT_USERNAME = 'REPLACE_WITH_YOUR_BOT_USERNAME';
+const BOT_USERNAME = 'Drramabox24bd_bot';
 const ADS_REQUIRED = 3;
 
 const params = new URLSearchParams(window.location.search);
