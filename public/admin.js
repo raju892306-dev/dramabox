@@ -41,8 +41,32 @@ async function loadVideos() {
   const { videos } = await callAdmin('listVideos');
   const list = document.getElementById('videoList');
   list.innerHTML = videos.length
-    ? videos.map((v) => `<div class="pending-item"><span>${escapeHtml(v.title)}</span><span>${new Date(v.createdAt).toLocaleDateString('bn-BD')}</span></div>`).join('')
+    ? videos.map((v) => `
+        <div class="pending-item">
+          <span>${escapeHtml(v.title)}</span>
+          <span style="display:flex; align-items:center; gap:10px;">
+            ${new Date(v.createdAt).toLocaleDateString('bn-BD')}
+            <button class="delete-btn" data-id="${v._id}" title="ডিলিট করুন">🗑️</button>
+          </span>
+        </div>
+      `).join('')
     : '<div class="pending-item">এখনো কিছু পাবলিশ করা হয়নি।</div>';
+
+  list.querySelectorAll('.delete-btn').forEach((btn) => {
+    btn.addEventListener('click', () => deleteVideo(btn.dataset.id));
+  });
+}
+
+async function deleteVideo(videoId) {
+  const confirmed = confirm('আপনি কি নিশ্চিত এই ভিডিওটি ডিলিট করতে চান? এটা আর ফিরিয়ে আনা যাবে না।');
+  if (!confirmed) return;
+
+  try {
+    await callAdmin('deleteVideo', { videoId });
+    await loadVideos();
+  } catch (e) {
+    alert('ডিলিট করতে সমস্যা হয়েছে: ' + e.message);
+  }
 }
 
 function escapeHtml(str) {
