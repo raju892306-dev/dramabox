@@ -5,25 +5,21 @@
 // POST /api/admin  { action: 'pendingUploads', initData }
 // POST /api/admin  { action: 'publishVideo', initData, pendingUploadId, title, thumbnailUrl }
 // POST /api/admin  { action: 'broadcast', initData, text, imageUrl? }
-
+// POST /api/admin  { action: 'deleteVideo', initData, videoId }
 const { getDb } = require('../lib/db');
 const { verifyInitData, sendMessage, sendPhoto } = require('../lib/telegram');
 const { ObjectId } = require('mongodb');
-
 const ADMIN_ID = Number(process.env.ADMIN_TELEGRAM_ID || 0);
-
 function requireAdmin(initData) {
   const user = verifyInitData(initData);
   if (!user || user.id !== ADMIN_ID) return null;
   return user;
 }
-
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
-
   try {
     const { action, initData } = req.body || {};
     const admin = requireAdmin(initData);
@@ -31,9 +27,7 @@ module.exports = async (req, res) => {
       res.status(403).json({ error: 'Not authorized' });
       return;
     }
-
     const db = await getDb();
-
     if (action === 'pendingUploads') {
       // Videos the admin has sent to the bot but not yet published with a title/thumbnail.
       const pending = await db
@@ -44,7 +38,6 @@ module.exports = async (req, res) => {
       res.status(200).json({ pending });
       return;
     }
-
     if (action === 'publishVideo') {
       const { pendingUploadId, title, thumbnailUrl } = req.body;
       if (!pendingUploadId || !ObjectId.isValid(pendingUploadId) || !title || !thumbnailUrl) {
@@ -58,7 +51,6 @@ module.exports = async (req, res) => {
         res.status(404).json({ error: 'Pending upload not found' });
         return;
       }
-
       await db.collection('videos').insertOne({
         title,
         thumbnailUrl,
@@ -66,21 +58,34 @@ module.exports = async (req, res) => {
         published: true,
         createdAt: new Date(),
       });
-
       await db
         .collection('pending_uploads')
         .updateOne({ _id: pending._id }, { $set: { published: true } });
-
       res.status(200).json({ success: true });
       return;
     }
-
     if (action === 'listVideos') {
       const videos = await db.collection('videos').find({}).sort({ createdAt: -1 }).toArray();
       res.status(200).json({ videos });
       return;
     }
-
+    if (action === 'deleteVideo') {
+      const { videoId } = req.body;
+      if (!videoId || !ObjectId.isValid(videoId)) {
+        res.status(400).json({ error: 'Invalid videoId' });
+        return;
+      }
+      const result = await db.collection('videos').deleteOne({ _id: new ObjectId(videoId) });
+      if (result.deletedCount === 0) {
+        res.status(404).json({ error: 'Video not found' });
+        return;
+      }
+      // Also clear any per-user 24h locks tied to this video, so nothing
+      // stale is left behind referencing a video that no longer exists.
+      await db.collection('unlocks').deleteMany({ videoId: videoId });
+      res.status(200).json({ success: true });
+      return;
+    }
     if (action === 'broadcast') {
       const { text, imageUrl } = req.body;
       if (!text) {
@@ -88,7 +93,6 @@ module.exports = async (req, res) => {
         return;
       }
       const users = await db.collection('users').find({}).project({ telegramId: 1 }).toArray();
-
       let sent = 0;
       let failed = 0;
       // Sequential sends to stay well within Telegram's rate limits
@@ -105,11 +109,9 @@ module.exports = async (req, res) => {
           failed++;
         }
       }
-
       res.status(200).json({ success: true, sent, failed, total: users.length });
       return;
     }
-
     res.status(400).json({ error: 'Unknown action' });
   } catch (err) {
     console.error('admin.js error:', err);
