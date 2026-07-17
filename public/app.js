@@ -2,24 +2,22 @@
 const tg = window.Telegram?.WebApp;
 tg?.ready();
 tg?.expand();
-
 const TELEGRAM_CHANNEL_URL = 'https://t.me/+nQBEmrjwdKQ1YTA9';
-
 document.getElementById('telegramBtn').href = TELEGRAM_CHANNEL_URL;
-
-
 const user = tg?.initDataUnsafe?.user;
 if (user) {
   document.getElementById('userName').textContent = user.first_name || user.username || 'User';
-  document.getElementById('avatar').textContent = (user.first_name || '?')[0].toUpperCase();
+  const avatarEl = document.getElementById('avatar');
+  if (user.photo_url) {
+    avatarEl.innerHTML = `<img src="${user.photo_url}" alt="" />`;
+  } else {
+    avatarEl.textContent = (user.first_name || '?')[0].toUpperCase();
+  }
 }
-
 const grid = document.getElementById('grid');
 const emptyState = document.getElementById('emptyState');
 const searchInput = document.getElementById('searchInput');
-
 let allVideos = [];
-
 async function loadVideos() {
   try {
     const userId = user?.id || '';
@@ -31,14 +29,11 @@ async function loadVideos() {
     grid.innerHTML = '<div class="empty-state">লোড করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।</div>';
   }
 }
-
 function render(videos) {
   grid.innerHTML = '';
   emptyState.hidden = videos.length !== 0;
-
   for (const v of videos) {
     const locked = v.lockedUntil && v.lockedUntil > Date.now();
-
     const card = document.createElement('div');
     card.className = 'card';
     card.innerHTML = `
@@ -67,17 +62,14 @@ function render(videos) {
     grid.appendChild(card);
   }
 }
-
 function escapeHtml(str) {
   const d = document.createElement('div');
   d.textContent = str || '';
   return d.innerHTML;
 }
-
 searchInput.addEventListener('input', () => {
   const q = searchInput.value.trim().toLowerCase();
   const filtered = allVideos.filter((v) => v.title.toLowerCase().includes(q));
   render(filtered);
 });
-
 loadVideos();
