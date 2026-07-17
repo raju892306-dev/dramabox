@@ -75,20 +75,20 @@ body {
 }
 .video-meta .title { font-size: 14px; }
 
-.bottom-links {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  display: flex; justify-content: flex-end;
-  padding: 14px 16px;
-  background: linear-gradient(transparent, #0f1210 40%);
-}
-.tg-btn {
+.tg-float-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 16px;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
   background: #229ed9;
-  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  z-index: 50;
   text-decoration: none;
-  padding: 10px 16px;
-  border-radius: 24px;
-  font-size: 13px;
-  font-weight: 600;
 }
 
 /* ==== Modal ==== */
