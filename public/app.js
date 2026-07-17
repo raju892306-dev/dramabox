@@ -6,7 +6,7 @@ tg?.expand();
 const TELEGRAM_CHANNEL_URL = 'https://t.me/+nQBEmrjwdKQ1YTA9';
 
 document.getElementById('telegramBtn').href = TELEGRAM_CHANNEL_URL;
-document.getElementById('adultBtn').href = TELEGRAM_CHANNEL_URL;
+
 
 const user = tg?.initDataUnsafe?.user;
 if (user) {
