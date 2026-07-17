@@ -1,8 +1,4 @@
 // public/watch.js
-// Ad flow: as soon as the page loads, we start a 15-second visual countdown
-// ("সার্ভারের সাথে কানেক্ট হচ্ছে...") AND trigger the Adsgram ad at the same time.
-// We only call /api/unlock (which sends the video and applies the 24h lock)
-// after the SDK reports the ad was genuinely watched.
 const tg = window.Telegram?.WebApp;
 tg?.ready();
 tg?.expand();
@@ -11,56 +7,43 @@ tg?.expand();
 const ADSGRAM_BLOCK_ID = '38638';
 // TODO: replace with your bot's @username so "Check inbox" can deep-link to it.
 const BOT_USERNAME = 'REPLACE_WITH_YOUR_BOT_USERNAME';
+const ADS_REQUIRED = 3;
 
 const params = new URLSearchParams(window.location.search);
 const videoId = params.get('id');
 
-const loadingState = document.getElementById('loadingState');
+const unlockCard = document.getElementById('unlockCard');
 const successState = document.getElementById('successState');
 const errorState = document.getElementById('errorState');
-const statusTitle = document.getElementById('statusTitle');
 const errorMsg = document.getElementById('errorMsg');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+const unlockBtn = document.getElementById('unlockBtn');
+
+let watchedCount = 0;
 
 function showError(msg) {
-  loadingState.hidden = true;
+  unlockCard.hidden = true;
   successState.hidden = true;
   errorState.hidden = false;
   errorMsg.textContent = msg;
 }
 
 function showSuccess() {
-  loadingState.hidden = true;
+  unlockCard.hidden = true;
   errorState.hidden = true;
   successState.hidden = false;
 }
 
-// 15-second visual countdown shown while the ad loads/plays in the background
-let countdownInterval = null;
-function startCountdown() {
-  let seconds = 15;
-  statusTitle.textContent = `সার্ভারের সাথে কানেক্ট হচ্ছে... (${seconds})`;
-  countdownInterval = setInterval(() => {
-    seconds -= 1;
-    if (seconds <= 0) {
-      clearInterval(countdownInterval);
-      countdownInterval = null;
-      statusTitle.textContent = 'অ্যাড দেখানো হচ্ছে...';
-      return;
-    }
-    statusTitle.textContent = `সার্ভারের সাথে কানেক্ট হচ্ছে... (${seconds})`;
-  }, 1000);
-}
-
-function stopCountdown() {
-  if (countdownInterval) {
-    clearInterval(countdownInterval);
-    countdownInterval = null;
-  }
+function updateProgress() {
+  const pct = (watchedCount / ADS_REQUIRED) * 100;
+  progressFill.style.width = `${pct}%`;
+  progressText.textContent = `Progress: ${watchedCount}/${ADS_REQUIRED}`;
 }
 
 async function completeUnlock() {
-  stopCountdown();
-  statusTitle.textContent = 'ভিডিও পাঠানো হচ্ছে...';
+  unlockBtn.disabled = true;
+  unlockBtn.textContent = 'ভিডিও পাঠানো হচ্ছে...';
   try {
     const res = await fetch('/api/unlock', {
       method: 'POST',
@@ -82,31 +65,42 @@ async function completeUnlock() {
   }
 }
 
-function runAd() {
-  if (!videoId) {
-    showError('ভিডিও খুঁজে পাওয়া যায়নি।');
-    return;
-  }
+function watchOneAd() {
   if (!window.Adsgram || ADSGRAM_BLOCK_ID.startsWith('REPLACE_')) {
-    stopCountdown();
     showError('বিজ্ঞাপন সিস্টেম এখনো কনফিগার করা হয়নি (Adsgram block id সেট করুন)।');
     return;
   }
 
-  // Start the 15-second countdown text AND trigger the Adsgram ad at the same moment
-  startCountdown();
+  unlockBtn.disabled = true;
+  unlockBtn.textContent = 'অ্যাড লোড হচ্ছে...';
 
   const AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
   AdController.show()
     .then(() => {
-      // Ad was genuinely shown and watched through — now unlock.
-      completeUnlock();
+      // This ad was genuinely watched through
+      watchedCount += 1;
+      updateProgress();
+
+      if (watchedCount >= ADS_REQUIRED) {
+        completeUnlock();
+      } else {
+        unlockBtn.disabled = false;
+        unlockBtn.textContent = `🔒 Watch Ad ${watchedCount + 1}/${ADS_REQUIRED}`;
+      }
     })
-    .catch((result) => {
-      // User skipped/closed the ad early, or no ad was available.
-      stopCountdown();
-      showError('অ্যাডটি সম্পূর্ণ দেখা হয়নি। ভিডিও আনলক করতে সম্পূর্ণ অ্যাডটি দেখুন।');
+    .catch(() => {
+      // User skipped/closed the ad early, or no ad was available
+      unlockBtn.disabled = false;
+      unlockBtn.textContent = '🔒 Unlock Video';
+      tg?.showAlert?.('অ্যাডটি সম্পূর্ণ দেখা হয়নি। আবার চেষ্টা করুন।');
     });
+}
+
+if (!videoId) {
+  showError('ভিডিও খুঁজে পাওয়া যায়নি।');
+} else {
+  updateProgress();
+  unlockBtn.addEventListener('click', watchOneAd);
 }
 
 document.getElementById('checkInboxBtn')?.addEventListener('click', () => {
@@ -116,5 +110,3 @@ document.getElementById('checkInboxBtn')?.addEventListener('click', () => {
     tg?.close?.();
   }
 });
-
-runAd();
