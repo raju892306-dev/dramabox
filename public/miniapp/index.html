@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>Drama House</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">DH</div>
+    <span>Drama House</span>
+  </div>
+</header>
+
+<div class="search-wrap">
+  <input type="text" placeholder="মুভির নাম বা এপিসোড নাম দিয়ে সার্চ করুন" />
+</div>
+
+<main id="video-list" class="video-list">
+  <p class="loading-text">লোড হচ্ছে...</p>
+</main>
+
+<div class="bottom-links">
+  <a id="telegram-btn" class="tg-btn" href="#" target="_blank">📢 Telegram Channel</a>
+</div>
+
+<!-- ==== Ad / Unlock মোডাল ==== -->
+<div id="ad-modal" class="modal hidden">
+  <div class="modal-content">
+    <div class="countdown-circle">
+      <span id="countdown-num">15</span>
+    </div>
+    <p id="ad-status-text" class="ad-status">বিজ্ঞাপন চলছে...</p>
+    <p class="ad-sub-text">বিজ্ঞাপন শেষ হলে ভিডিওটি স্বয়ংক্রিয়ভাবে আপনার টেলিগ্রাম ইনবক্সে চলে যাবে।</p>
+  </div>
+</div>
+
+<div id="success-modal" class="modal hidden">
+  <div class="modal-content">
+    <div class="check-mark">✓</div>
+    <p class="success-title">সফলভাবে সম্পন্ন হয়েছে!</p>
+    <p class="ad-sub-text">ভিডিওটি পাঠানো হয়েছে! ভিডিওটি পেতে ইনবক্স চেক করুন।</p>
+    <p class="lock-note">নোট: এই ভিডিওটি আগামী ২৪ ঘণ্টার জন্য লক করা হয়েছে।</p>
+    <button id="close-success-btn" class="check-inbox-btn">ঠিক আছে</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
