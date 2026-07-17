@@ -260,6 +260,56 @@ body {
   padding: 24px;
   text-align: center;
 }
+.unlock-card {
+  width: 100%;
+  max-width: 340px;
+  background: #121a1e;
+  border: 1.5px solid rgba(58,160,224,0.45);
+  border-radius: 18px;
+  padding: 22px;
+  text-align: left;
+}
+.unlock-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--lock);
+  margin-bottom: 16px;
+}
+.play-dot { color: var(--lock); }
+.unlock-progress-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.unlock-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #22d3ee, #3b82f6);
+  transition: width 0.3s ease;
+}
+.unlock-progress-text {
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 18px;
+}
+.unlock-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #22d3ee, #2563eb);
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+}
+.unlock-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 .spinner-ring {
   width: 96px;
   height: 96px;
