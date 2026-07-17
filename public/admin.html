@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Drama House — Admin</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="admin-body">
+
+  <div id="deniedState" class="denied" hidden>
+    এই পেজ শুধুমাত্র অ্যাডমিনের জন্য।
+  </div>
+
+  <div id="adminApp" hidden>
+    <h1 style="font-size:19px; margin-bottom:16px;">Drama House — Admin</h1>
+
+    <div class="admin-section">
+      <h2>নতুন ভিডিও পাবলিশ করুন</h2>
+      <div class="field">
+        <label>ভিডিও বেছে নিন (বটে যেগুলো পাঠিয়েছেন)</label>
+        <select id="pendingSelect"></select>
+      </div>
+      <div class="field">
+        <label>টাইটেল</label>
+        <input type="text" id="titleInput" placeholder="Episode 105 - এপিসোড ১০৫" />
+      </div>
+      <div class="field">
+        <label>থাম্বনেইল ইমেজ URL</label>
+        <input type="text" id="thumbInput" placeholder="https://..." />
+      </div>
+      <button class="admin-btn" id="publishBtn">পাবলিশ করুন</button>
+      <div class="status-msg" id="publishStatus"></div>
+    </div>
+
+    <div class="admin-section">
+      <h2>সব ইউজারকে মেসেজ পাঠান</h2>
+      <div class="field">
+        <label>মেসেজ</label>
+        <textarea id="broadcastText" placeholder="আপনার মেসেজ লিখুন..."></textarea>
+      </div>
+      <div class="field">
+        <label>ইমেজ URL (ঐচ্ছিক)</label>
+        <input type="text" id="broadcastImage" placeholder="https://... (না দিলে খালি রাখুন)" />
+      </div>
+      <button class="admin-btn" id="broadcastBtn">পাঠান</button>
+      <div class="status-msg" id="broadcastStatus"></div>
+    </div>
+
+    <div class="admin-section">
+      <h2>পাবলিশ করা ভিডিওসমূহ</h2>
+      <div id="videoList"></div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

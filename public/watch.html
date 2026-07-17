@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Drama House</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<!-- Adsgram SDK. Replace BLOCK_ID in watch.js with your real Adsgram block id. -->
+<script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="watch-body">
+
+  <div id="loadingState">
+    <div class="spinner-ring"><span>▶</span></div>
+    <div class="watch-title" id="statusTitle">অ্যাড লোড হচ্ছে...</div>
+    <div class="watch-sub">অ্যাড দেখা শেষ হলে ভিডিওটি স্বয়ংক্রিয়ভাবে আপনার টেলিগ্রাম ইনবক্সে চলে যাবে।</div>
+  </div>
+
+  <div id="successState" class="success-wrap" hidden>
+    <div class="check-circle">✓</div>
+    <div class="success-title">সফলভাবে সম্পন্ন হয়েছে!</div>
+    <div class="success-sub">অ্যাড দেখা সফল হয়েছে! ভিডিওটি পেতে ইনবক্স চেক করুন।</div>
+    <div class="note-lock">নোট: এই ভিডিওটি আগামী ২৪ ঘণ্টার জন্য লক করা হয়েছে।</div>
+    <button class="primary-btn" id="checkInboxBtn">ইনবক্স চেক করুন</button>
+  </div>
+
+  <div id="errorState" hidden>
+    <div class="watch-title">⚠️ কিছু একটা ভুল হয়েছে</div>
+    <div class="watch-sub" id="errorMsg">আবার চেষ্টা করুন।</div>
+    <button class="primary-btn" onclick="location.reload()">আবার চেষ্টা করুন</button>
+  </div>
+
+  <script src="watch.js"></script>
+</body>
+</html>
