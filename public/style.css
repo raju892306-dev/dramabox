@@ -14,6 +14,10 @@
 
 * { box-sizing: border-box; }
 
+/* Make sure the `hidden` attribute always wins, even over display:flex
+   rules set on the same element elsewhere in this file. */
+[hidden] { display: none !important; }
+
 html, body {
   margin: 0;
   padding: 0;
