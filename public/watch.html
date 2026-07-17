@@ -11,10 +11,13 @@
 </head>
 <body class="watch-body">
 
-  <div id="loadingState">
-    <div class="spinner-ring"><span>▶</span></div>
-    <div class="watch-title" id="statusTitle">অ্যাড লোড হচ্ছে...</div>
-    <div class="watch-sub">অ্যাড দেখা শেষ হলে ভিডিওটি স্বয়ংক্রিয়ভাবে আপনার টেলিগ্রাম ইনবক্সে চলে যাবে।</div>
+  <div id="unlockCard" class="unlock-card">
+    <div class="unlock-title"><span class="play-dot">▶</span> Watch 3 ads to unlock</div>
+    <div class="unlock-progress-track">
+      <div class="unlock-progress-fill" id="progressFill"></div>
+    </div>
+    <div class="unlock-progress-text" id="progressText">Progress: 0/3</div>
+    <button class="unlock-btn" id="unlockBtn">🔒 Unlock Video</button>
   </div>
 
   <div id="successState" class="success-wrap" hidden>
