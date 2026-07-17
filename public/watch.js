@@ -3,7 +3,7 @@ const tg = window.Telegram?.WebApp;
 tg?.ready();
 tg?.expand();
 // Your Adsgram block id.
-const ADSGRAM_BLOCK_ID = '38678';
+const ADSGRAM_BLOCK_ID = 'int-38708';
 const BOT_USERNAME = 'Drramabox24bd_bot';
 const ADS_REQUIRED = 3;
 const params = new URLSearchParams(window.location.search);
