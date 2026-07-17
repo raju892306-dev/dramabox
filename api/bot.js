@@ -1,26 +1,20 @@
 // api/bot.js
 // Vercel serverless function: POST target for the Telegram webhook.
 // Set the webhook once (see README) to point here.
-
 const { getDb } = require('../lib/db');
 const { sendMessage } = require('../lib/telegram');
-
 const APP_URL = process.env.APP_URL; // e.g. https://your-project.vercel.app
 const ADMIN_ID = String(process.env.ADMIN_TELEGRAM_ID || '');
-
 const WELCOME_TEXT =
   '<b>আসসালামুয়ালাইকুম</b> 🥰\n\n' +
   'আমাদের বট ২৪ ঘন্টা সচল। ভিডিও ডাউনলোড করতে নিচের <b>Watch Now</b> বাটনে ক্লিক করুন 🥰';
-
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     res.status(200).send('Drama House bot webhook is alive.');
     return;
   }
-
   try {
     const update = req.body;
-
     // --- Handle admin uploading a video file directly to the bot ---
     // Admin sends a video message to the bot; we record its file_id so the
     // admin panel can attach a title + thumbnail to it. Only ADMIN_ID may do this.
@@ -42,13 +36,11 @@ module.exports = async (req, res) => {
       res.status(200).send('ok');
       return;
     }
-
-    // --- Handle /start ---
+    // --- Handle /start and /admin ---
     if (update.message && update.message.text) {
       const text = update.message.text.trim();
       const chatId = update.message.chat.id;
       const userId = update.message.from.id;
-
       if (text.startsWith('/start')) {
         const db = await getDb();
         await db.collection('users').updateOne(
@@ -64,7 +56,6 @@ module.exports = async (req, res) => {
           },
           { upsert: true }
         );
-
         await sendMessage(chatId, WELCOME_TEXT, {
           reply_markup: {
             inline_keyboard: [
@@ -74,10 +65,23 @@ module.exports = async (req, res) => {
         });
       }
 
+      // --- /admin: only opens for ADMIN_ID, everyone else gets no response ---
+      if (text.startsWith('/admin')) {
+        if (String(userId) === ADMIN_ID) {
+          await sendMessage(chatId, 'Admin panel 👇', {
+            reply_markup: {
+              inline_keyboard: [
+                [{ text: '⚙️ Open Admin Panel', web_app: { url: `${APP_URL}/admin.html` } }],
+              ],
+            },
+          });
+        }
+        // Silently ignore for non-admins — don't reveal that /admin exists.
+      }
+
       res.status(200).send('ok');
       return;
     }
-
     res.status(200).send('ok');
   } catch (err) {
     console.error('bot.js error:', err);
