@@ -44,7 +44,7 @@ function render(videos) {
     card.innerHTML = `
       <div class="thumb-wrap" data-id="${v.id}">
         <img src="${v.thumbnailUrl}" alt="${escapeHtml(v.title)}" loading="lazy" />
-        <div class="badge-18">18+</div>
+        
         ${locked ? `
           <div class="lock-overlay">
             <div class="lock-icon">🔒</div>
