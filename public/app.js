@@ -57,9 +57,37 @@ function render(videos) {
         tg?.showAlert?.('এই ভিডিওটি আগামী ২৪ ঘণ্টার জন্য লক করা আছে।');
         return;
       }
-      window.location.href = `watch.html?id=${v.id}`;
+      sendVideoDirectly(v.id, thumbWrap);
     });
     grid.appendChild(card);
+  }
+}
+async function sendVideoDirectly(videoId, thumbWrap) {
+  thumbWrap.style.opacity = '0.6';
+  thumbWrap.style.pointerEvents = 'none';
+  try {
+    const res = await fetch('/api/unlock', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ videoId, initData: tg?.initData }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      if (res.status === 423) {
+        tg?.showAlert?.('এই ভিডিওটি আগামী ২৪ ঘণ্টার জন্য লক করা আছে।');
+      } else {
+        tg?.showAlert?.(data.error || 'সমস্যা হয়েছে, আবার চেষ্টা করুন।');
+      }
+      thumbWrap.style.opacity = '1';
+      thumbWrap.style.pointerEvents = 'auto';
+      return;
+    }
+    tg?.showAlert?.('ভিডিওটি আপনার ইনবক্সে পাঠানো হয়েছে ✅');
+    await loadVideos();
+  } catch (e) {
+    tg?.showAlert?.('নেটওয়ার্ক সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+    thumbWrap.style.opacity = '1';
+    thumbWrap.style.pointerEvents = 'auto';
   }
 }
 function escapeHtml(str) {
