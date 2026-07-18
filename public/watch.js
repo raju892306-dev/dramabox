@@ -3,9 +3,6 @@ const tg = window.Telegram?.WebApp;
 tg?.ready();
 tg?.expand();
 
-// RichAds (richinfo.co) config — pubId/appId set in watch.html's <head>.
-// TODO: Once you get the Rewarded Ad zone ID / function from RichAds support,
-// paste it into showOneRichAd() below — that's the only place it needs to go.
 const BOT_USERNAME = 'Drramabox24bd_bot';
 const ADS_REQUIRED = 3;
 
@@ -65,21 +62,19 @@ async function completeUnlock() {
   }
 }
 
-// ---- RichAds rewarded ad call ----
-// PLACEHOLDER: RichAds support hasn't given us the specific rewarded-ad
-// zone ID / show function yet. Once they do, replace the body of this
-// function with their real call (it should return a Promise that resolves
-// when the ad was genuinely watched through, and rejects if skipped/failed —
-// same pattern Adsgram used).
+// ---- RichAds ad call ----
+// Using RichAds' interstitial trigger as the per-click ad. If their exact
+// function name turns out to be different (check window.TelegramAdsController
+// in the browser console), only this function needs to change.
 function showOneRichAd() {
   return new Promise((resolve, reject) => {
-    if (!window.TelegramAdsController) {
-      reject(new Error('RichAds SDK not loaded yet'));
+    if (!window.TelegramAdsController || typeof window.TelegramAdsController.triggerInterstitial !== 'function') {
+      reject(new Error('RichAds SDK not ready'));
       return;
     }
-    // TODO: replace this with the real RichAds rewarded-ad trigger once provided, e.g.:
-    // window.TelegramAdsController.triggerRewarded({ zoneId: 'XXXX' }).then(resolve).catch(reject);
-    reject(new Error('RichAds rewarded ad not configured yet — waiting on zone ID from RichAds support.'));
+    window.TelegramAdsController.triggerInterstitial()
+      .then(resolve)
+      .catch(reject);
   });
 }
 
@@ -89,7 +84,6 @@ function watchOneAd() {
 
   showOneRichAd()
     .then(() => {
-      // This ad was genuinely watched through
       watchedCount += 1;
       updateProgress();
 
