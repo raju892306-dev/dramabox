@@ -212,7 +212,7 @@ function render(videos) {
         ${locked ? `
           <div class="lock-overlay">
             <div class="lock-icon">🔒</div>
-            <div class="lock-label">24H Locked</div>
+            <div class="lock-label">10 Min Locked</div>
           </div>` : ''}
       </div>
       <div class="card-footer">
@@ -223,7 +223,7 @@ function render(videos) {
     const thumbWrap = card.querySelector('.thumb-wrap');
     thumbWrap.addEventListener('click', () => {
       if (locked) {
-        tg?.showAlert?.('এই ভিডিওটি আগামী ২৪ ঘণ্টার জন্য লক করা আছে।');
+        tg?.showAlert?.('এই ভিডিওটি ১০ মিনিটের জন্য লক করা আছে।');
         return;
       }
       openAdsModal(v.id, thumbWrap);
@@ -244,7 +244,7 @@ async function sendVideoDirectly(videoId, thumbWrap) {
     const data = await res.json();
     if (!res.ok) {
       if (res.status === 423) {
-        tg?.showAlert?.('এই ভিডিওটি আগামী ২৪ ঘণ্টার জন্য লক করা আছে।');
+        tg?.showAlert?.('এই ভিডিওটি ১০ মিনিটের জন্য লক করা আছে।');
       } else {
         tg?.showAlert?.(data.error || 'সমস্যা হয়েছে, আবার চেষ্টা করুন।');
       }
