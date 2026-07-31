@@ -23,7 +23,6 @@ const searchInput = document.getElementById('searchInput');
 let allVideos = [];
 
 const REQUIRED_ADS = 5;
-const ADSGALAXY_MINIAPP_ID = 13;
 
 // ---------- Ads Unlock Modal (self-contained styles, injected once) ----------
 (function injectAdsModalStyles() {
@@ -160,7 +159,7 @@ adsModalClose.addEventListener('click', closeAdsModal);
 
 adsWatchBtn.addEventListener('click', () => {
   if (adsWatchedCount >= REQUIRED_ADS) {
-    // All ads watched -> send video and close modal
+    // সব ad দেখা শেষ -> ভিডিও পাঠাও এবং modal বন্ধ করো
     const videoId = activeVideoId;
     const thumbWrap = activeThumbWrap;
     closeAdsModal();
@@ -168,21 +167,32 @@ adsWatchBtn.addEventListener('click', () => {
     return;
   }
 
-  // Trigger AdsGalaxy ad.
-  // NOTE: exact callback option name (e.g. onComplete) is a guess based on
-  // the SDK naming convention — confirm against AdsGalaxy's full docs and
-  // adjust the key below if it differs.
-  if (typeof window.showAdsGalaxy === 'function') {
-    window.showAdsGalaxy({
-      miniappId: ADSGALAXY_MINIAPP_ID,
-      onComplete: () => {
-        adsWatchedCount++;
-        updateAdsProgressUI();
-      },
-    });
-  } else {
+  // AdsGalaxy ad কল করো (Promise-based, কোনো parameter ছাড়া)
+  if (typeof window.showAdsGalaxy !== 'function') {
     tg?.showAlert?.('বিজ্ঞাপন লোড হয়নি, একটু পর আবার চেষ্টা করুন।');
+    return;
   }
+
+  adsWatchBtn.disabled = true;
+  window.showAdsGalaxy()
+    .then(() => {
+      adsWatchedCount++;
+      updateAdsProgressUI();
+      adsWatchBtn.disabled = false;
+    })
+    .catch((error) => {
+      console.error('Ad error:', error?.code, error?.message);
+      adsWatchBtn.disabled = false;
+      if (error?.code === 'NO_FILL') {
+        tg?.showAlert?.('এই মুহূর্তে বিজ্ঞাপন পাওয়া যায়নি। একটু পর চেষ্টা করুন।');
+      } else if (error?.code === 'INVALID_INIT_DATA') {
+        tg?.showAlert?.('অ্যাপটি Telegram-এর ভেতর থেকে খুলুন।');
+      } else if (error?.code === 'APP_NOT_READY') {
+        tg?.showAlert?.('অ্যাপ এখনো প্রস্তুত না, একটু পর চেষ্টা করুন।');
+      } else {
+        tg?.showAlert?.('বিজ্ঞাপন দেখাতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+      }
+    });
 });
 
 // ---------- Video grid ----------
