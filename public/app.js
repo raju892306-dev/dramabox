@@ -23,6 +23,7 @@ const searchInput = document.getElementById('searchInput');
 let allVideos = [];
 
 const REQUIRED_ADS = 5;
+const ADSGALAXY_MINIAPP_ID = 13;
 
 // ---------- Ads Unlock Modal (self-contained styles, injected once) ----------
 (function injectAdsModalStyles() {
@@ -159,7 +160,7 @@ adsModalClose.addEventListener('click', closeAdsModal);
 
 adsWatchBtn.addEventListener('click', () => {
   if (adsWatchedCount >= REQUIRED_ADS) {
-    // সব ad দেখা শেষ -> ভিডিও পাঠাও এবং modal বন্ধ করো
+    // All ads watched -> send video and close modal
     const videoId = activeVideoId;
     const thumbWrap = activeThumbWrap;
     closeAdsModal();
@@ -167,7 +168,9 @@ adsWatchBtn.addEventListener('click', () => {
     return;
   }
 
-  // AdsGalaxy ad কল করো (Promise-based, কোনো parameter ছাড়া)
+  // Trigger AdsGalaxy ad. Per official docs, showAdsGalaxy() takes no
+  // arguments (the miniappId is already bound via the sdk.js?id=13 script
+  // tag) and returns a Promise.
   if (typeof window.showAdsGalaxy !== 'function') {
     tg?.showAlert?.('বিজ্ঞাপন লোড হয়নি, একটু পর আবার চেষ্টা করুন।');
     return;
@@ -181,16 +184,15 @@ adsWatchBtn.addEventListener('click', () => {
       adsWatchBtn.disabled = false;
     })
     .catch((error) => {
-      console.error('Ad error:', error?.code, error?.message);
       adsWatchBtn.disabled = false;
       if (error?.code === 'NO_FILL') {
-        tg?.showAlert?.('এই মুহূর্তে বিজ্ঞাপন পাওয়া যায়নি। একটু পর চেষ্টা করুন।');
+        tg?.showAlert?.('এই মুহূর্তে কোনো বিজ্ঞাপন নেই, একটু পর আবার চেষ্টা করুন।');
       } else if (error?.code === 'INVALID_INIT_DATA') {
-        tg?.showAlert?.('অ্যাপটি Telegram-এর ভেতর থেকে খুলুন।');
+        tg?.showAlert?.('অ্যাপটি Telegram এর ভিতর থেকে খুলুন।');
       } else if (error?.code === 'APP_NOT_READY') {
-        tg?.showAlert?.('অ্যাপ এখনো প্রস্তুত না, একটু পর চেষ্টা করুন।');
+        tg?.showAlert?.('অ্যাপ এখনো প্রস্তুত হয়নি, একটু পর চেষ্টা করুন।');
       } else {
-        tg?.showAlert?.('বিজ্ঞাপন দেখাতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+        tg?.showAlert?.('বিজ্ঞাপন দেখাতে সমস্যা হয়েছে, আবার চেষ্টা করুন।');
       }
     });
 });
