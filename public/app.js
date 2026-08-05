@@ -22,7 +22,7 @@ const emptyState = document.getElementById('emptyState');
 const searchInput = document.getElementById('searchInput');
 let allVideos = [];
 
-const REQUIRED_ADS = 5;
+const REQUIRED_ADS = 1;
 const ADSGALAXY_MINIAPP_ID = 13;
 
 // ---------- Ads Unlock Modal (self-contained styles, injected once) ----------
@@ -112,7 +112,7 @@ adsModalOverlay.style.position = 'fixed';
 adsModalOverlay.innerHTML = `
   <div class="ads-modal-box" style="position:relative;">
     <button class="ads-modal-close" id="adsModalClose">×</button>
-    <div class="ads-modal-title">▶ Watch ${REQUIRED_ADS} ads to unlock</div>
+    <div class="ads-modal-title">▶ Watch ${REQUIRED_ADS} ${REQUIRED_ADS === 1 ? 'ad' : 'ads'} to unlock</div>
     <div class="ads-modal-progress-track">
       <div class="ads-modal-progress-fill" id="adsProgressFill"></div>
     </div>
