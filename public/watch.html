@@ -1,38 +1,82 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Drama House</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<!-- AdsGalaxy SDK -->
-<script src="https://app.adsgalaxy.online/sdk.js/sdk.js?id=13"></script>
-  <!-- TEMP DEBUG TOOL - পরে রিমুভ করে দিও -->
-<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>eruda.init();</script>
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
+
+  <title>Drama House</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- AdsGalaxy SDK -->
+  <script src="https://app.adsgalaxy.online/sdk.js/sdk.js?id=13"></script>
+
+  <!-- TEMP DEBUG TOOL -->
+  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+  <script>
+    eruda.init();
+  </script>
+
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body class="watch-body">
   <div id="unlockCard" class="unlock-card">
-    <div class="unlock-title"><span class="play-dot">▶</span> Watch 5 ads to unlock</div>
+    <div class="unlock-title">
+      <span class="play-dot">▶</span>
+      Watch 1 ad to unlock
+    </div>
+
     <div class="unlock-progress-track">
       <div class="unlock-progress-fill" id="progressFill"></div>
     </div>
-    <div class="unlock-progress-text" id="progressText">Progress: 0/5</div>
-    <button class="unlock-btn" id="unlockBtn">🔒 Unlock Video</button>
+
+    <div class="unlock-progress-text" id="progressText">
+      Progress: 0/1
+    </div>
+
+    <button class="unlock-btn" id="unlockBtn">
+      🔒 Watch Ad
+    </button>
   </div>
+
   <div id="successState" class="success-wrap" hidden>
     <div class="check-circle">✓</div>
-    <div class="success-title">সফলভাবে সম্পন্ন হয়েছে!</div>
-    <div class="success-sub">অ্যাড দেখা সফল হয়েছে! ভিডিওটি পেতে ইনবক্স চেক করুন।</div>
-    <div class="note-lock">নোট: এই ভিডিওটি আগামী ২৪ ঘণ্টার জন্য লক করা হয়েছে।</div>
-    <button class="primary-btn" id="checkInboxBtn">ইনবক্স চেক করুন</button>
+
+    <div class="success-title">
+      সফলভাবে সম্পন্ন হয়েছে!
+    </div>
+
+    <div class="success-sub">
+      অ্যাড দেখা সফল হয়েছে! ভিডিওটি পেতে ইনবক্স চেক করুন।
+    </div>
+
+    <div class="note-lock">
+      নোট: এই ভিডিওটি আগামী ২৪ ঘণ্টার জন্য লক করা হয়েছে।
+    </div>
+
+    <button class="primary-btn" id="checkInboxBtn">
+      ইনবক্স চেক করুন
+    </button>
   </div>
+
   <div id="errorState" hidden>
-    <div class="watch-title">⚠️ কিছু একটা ভুল হয়েছে</div>
-    <div class="watch-sub" id="errorMsg">আবার চেষ্টা করুন।</div>
-    <button class="primary-btn" onclick="location.reload()">আবার চেষ্টা করুন</button>
+    <div class="watch-title">
+      ⚠️ কিছু একটা ভুল হয়েছে
+    </div>
+
+    <div class="watch-sub" id="errorMsg">
+      আবার চেষ্টা করুন।
+    </div>
+
+    <button class="primary-btn" onclick="location.reload()">
+      আবার চেষ্টা করুন
+    </button>
   </div>
+
   <script src="watch.js"></script>
 </body>
 </html>
